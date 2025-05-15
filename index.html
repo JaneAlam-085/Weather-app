@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Static Weather Card</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+
+  <div class="bg-white p-6 rounded-xl shadow-md w-96 text-gray-800 text-center border border-gray-200">
+
+
+<div class="search flex items-center justify-center space-x-2">
+  <input type="text" placeholder="Search..." class="my-4 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+  <button class=" bg-amber-400 text-white rounded-full h-10 w-10 p-2 aria-label=">
+    <img src="images/search2.png" alt="">
+  </button>
+</div>
+
+
+
+    <h1 class="city text-2xl font-bold mb-2">London, UK</h1>
+    <p class="weather text-lg text-gray-500 mb-4 capitalize">Scattered clouds</p>
+
+    <div class="flex justify-center mb-4">
+      <img src="images/clear.png" alt="weather icon" class="weather-icon w-24 h-24">
+    </div>
+
+    <p class="temp text-4xl font-bold mb-4">🌡 16°C</p>
+
+    <div class="grid grid-cols-2 gap-4 text-left text-sm">
+      <div class="flex">♒︎<strong> Humidity:</strong><p class="humidity"> </p> %</div>
+      <div class="flex">💭 <strong>Clouds:</strong> <p class="cloud"></p>%</div>
+      <div class="flex">🌪️ <strong>Wind:</strong> <p class="wind">3.2</p> km/h</div>
+      <div class="flex">🌧 <strong>Rain:</strong> <div class="rain">No rain</div></div>
+    </div>
+  </div>
+
+
+  <script>
+    const apiKey = "1481bc682665d79fefefb0ed68a4add3";
+    const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+    const searchBox = document.querySelector(".search input");
+    const searchBtn = document.querySelector(".search button");
+
+    const weatherIcon = document.querySelector(".weather-icon");
+    const weatherRain = document.querySelector(".rain");
+
+
+    async function checkWeather(city) {
+      const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+      var data = await response.json();
+
+      console.log(data);
+      document.querySelector(".city").innerHTML = data.name;
+      document.querySelector(".temp").innerHTML ="🌡"+ data.main.temp + "°C";
+      document.querySelector(".humidity").innerHTML = data.main.humidity;
+      document.querySelector(".wind").innerHTML = data.wind.speed ;
+      document.querySelector(".cloud").innerHTML = data.clouds.all ;
+      document.querySelector(".weather").innerHTML = data.weather[0].description ;
+
+      if(data.weather[0].description == "few clouds"){
+        weatherIcon.src = "images/clouds.png";
+      }
+      else if(data.weather[0].description == "clear sky"){
+        weatherIcon.src = "images/clear.png";
+      }
+      else if(data.weather[0].description == "overcast clouds"){
+        weatherIcon.src = "images/rain.png";
+      }
+      else if(data.weather[0].description == "scattered clouds"){
+        weatherIcon.src = "images/drizzle.png";
+      }
+      else if(data.weather[0].main == "mist"){
+        weatherIcon.src = "images/mist.png";
+      }
+     
+      if(data.weather[0].description == "overcast clouds"){
+        weatherRain.innerHTML = "Rain";
+      }
+      else if(data.weather[0].description == "clear sky"){
+        weatherRain.innerHTML = "No Rain";
+      }
+    }
+
+
+    searchBtn.addEventListener("click", ()=>{
+      checkWeather(searchBox.value);
+    })
+
+    
+  </script>
+</body>
+</html>
